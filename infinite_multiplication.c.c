@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
-
+//Ilker Keklik 150120074
 int base=10;
 
 FILE *readFilePtr; 
@@ -23,36 +24,55 @@ typedef enum bool bool;
 
 typedef digitList* digitListPtr;
 
-
+//This function pushes the integer value to the linked list that its root is rootPtr
 void push(digitListPtr* rootPtr,int x);
-
-void printDigitList(digitListPtr root);
-
+//This function gets input from a file
 void getInput(digitListPtr* rootPtr);
-
+//This function calculate the multiplication of numbers
 void calculate2(digitListPtr num1Root,digitListPtr num2Root,digitListPtr* resultRoot,int base);
-
+//This function gets base from the input file
 void getBase();
-
+//This function returns a length of the linked list given its root
 int listLen(digitListPtr root);
-
-void pushSequentially(digitListPtr* rootPtr,int x);
-
-void takeReverseFixAndPrint(digitListPtr root);
-
-
-
-
-int main(){
-	 readFilePtr = fopen("input.txt","r");
-
-		writeFilePtr = fopen("output.txt","w");
-
+//This function takes reverse of the linked list and print messages to console and also print outputs to output file
+void takeReverseFixAndPrint(digitListPtr root,char* str);
+//This function convert any base of number given by parameter to decimal number and prints as output
+void convertToDecimalAndPrint(char* str , int size, int _base,char* str2){
 	
+	int k = 0;
+	for(int a=0;a<size;a++){
+		if(str[a]!=NULL){
+		k++;
+		}
+		
+		
+	}
+	long int sum = 0;
+	size = k;
+	int pw = 0;
+	int i = size -1 ;
+	
+	for(i; i >= 0 ; i--){
+		sum += ((int)(pow(_base,pw++))*(str[i]-'0'));
+	}
+	
+	char* num = (char*) calloc(size,sizeof(char)); 
+	
+	printf("\n%s in base %d: %ld",str2,10,sum);
+	
+}
 
+int main(int argc,char* argv[]){
 	
-	
-	
+	if(argc==1)
+		printf("Error Message!");
+	if(argc>=2){
+		readFilePtr = fopen(argv[1],"r");
+	}
+//	readFilePtr = fopen("150120074_p1_input.txt","r");
+
+	writeFilePtr = fopen("150120074_p1_output.txt","w");
+
 	digitListPtr number1Root=NULL;
 	
 	digitListPtr number2Root = NULL;
@@ -62,36 +82,20 @@ int main(){
 	getInput(&number1Root);
 	getInput(&number2Root);
 	getBase();
-	
-	
-	
+		
 	calculate2(number1Root,number2Root,&resultRoot,base);
 	
+	printf("\nMultiplicand in base %d : ",base);
+	takeReverseFixAndPrint(number1Root,"Multiplicand\0");
+	printf("\nMultiplier in base %d : ",base);
+	takeReverseFixAndPrint(number2Root,"Multiplier\0");
 	
-	
-
-	takeReverseFixAndPrint(number1Root);
-	takeReverseFixAndPrint(number2Root);
-	
-	if(base!=10){
-		fputc(48+base,writeFilePtr);
-	}else{
-		fputc(49,writeFilePtr);
-		fputc(48,writeFilePtr);
-	}
-	
-	fputc('\n',writeFilePtr);
-	
-	printf("CEVAP:\n\n");
-	takeReverseFixAndPrint(resultRoot);
-	
-	
+	printf("\nResult in base %d : ",base);
+	takeReverseFixAndPrint(resultRoot,"Result\0");
 	
 	fclose(readFilePtr);
 	fclose(writeFilePtr);
 
-	
-		
 	return 0;
 }
 
@@ -108,9 +112,7 @@ void calculate2(digitListPtr num1Root,digitListPtr num2Root,digitListPtr *result
 		push(resultRoot,0);
 	}
 	
-	
 	digitListPtr iter = *resultRoot;
-	
 	
 	int k=1;
 	//num2
@@ -154,13 +156,11 @@ void calculate2(digitListPtr num1Root,digitListPtr num2Root,digitListPtr *result
 		}
 		iter=iter->next;
 		
-		
 	}
-	
 	
 }//FUNC END
 
-void takeReverseFixAndPrint(digitListPtr root){
+void takeReverseFixAndPrint(digitListPtr root,char*str){
 	
 	int len =listLen(root);
 	
@@ -173,25 +173,7 @@ void takeReverseFixAndPrint(digitListPtr root){
 			
 		arr[i]=iter->digit;
 		iter=iter->next;	
-		
-		
-		
-		
 	}
-	
-	
-	
-//	printf("\n");
-//	printf("\n");
-//	printf("\n");
-//	printf("Tersi cevrilmis \n");
-//	
-//	for(int i=0;i<len;i++){
-//		
-//		printf("%d ",arr[i]);
-//	}
-//	
-//	printf("Basinda sifir olmadan yazdiriliyor\n");
 	
 	char c;
 	int k =0;
@@ -199,15 +181,32 @@ void takeReverseFixAndPrint(digitListPtr root){
 		k++;
 	}
 	
-
+	char* strNum = (char*)calloc(len+1,sizeof(char));
 	
+	if(k!=0){
+		int s =k;
+		for(k;k<len;k++){
+		c=48+arr[k];
+		fputc(c,writeFilePtr);
+		strNum[k-s] = c;
+		printf("%d ",arr[k]);
+	}
+	strNum[k]='\0';
+	
+	}else{
 	for(k;k<len;k++){
 		c=48+arr[k];
 		fputc(c,writeFilePtr);
-	//	printf("%d ",arr[k]);
+		strNum[k] = c;
+		printf("%d ",arr[k]);
 	}
-	fputc('\n',writeFilePtr);
+	strNum[k]='\0';
+		
+	}
 	
+	fputc('\n',writeFilePtr);
+		
+	convertToDecimalAndPrint(strNum,len,base,str);
 	
 	
 }//func end
@@ -233,16 +232,6 @@ void push(digitListPtr* rootPtr,int x){
 		*rootPtr=temp;
 		temp->digit=x;
 	
-
-}
-
-void printDigitList(digitListPtr root){
-	
-	while(root!=NULL){
-		printf("%d ",root->digit);
-		root=root->next;
-	}	
-	printf("\n");
 }
 
 void getInput(digitListPtr* rootPtr){	
@@ -253,18 +242,12 @@ void getInput(digitListPtr* rootPtr){
 		return;
 	}
 	
-
-	
 	do{
 		c=fgetc(readFilePtr);
 		
 		if(c>=48&&c<=57){
 		push(rootPtr,c - 48);	
-		}else{
-		printf("%c is not a number\n",c);	
 		}
-		
-		
 		
 	}while(c!='\n');	             
 
@@ -280,27 +263,3 @@ int listLen(digitListPtr root){
 	return i;
 	
 }
-
-void pushSequentially(digitListPtr* rootPtr,int x){
-		if(*rootPtr==NULL){
-		
-			*rootPtr= (digitListPtr)malloc(sizeof(digitList));
-			(*rootPtr)->next=NULL;
-			(*rootPtr)->digit=x;
-			
-			return ;
-		}
-		
-		digitListPtr iter = *rootPtr;
-	
-	while(iter->next!=NULL){
-		iter=iter->next;
-	}
-	
-	iter->next = (digitListPtr)malloc(sizeof(digitList));
-	iter->next->digit=x;
-	iter->next->next=NULL;
-	return ;
-	
-}
-
