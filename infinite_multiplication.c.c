@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 
-//Ilker Keklik 150120074
+//Ilker Keklik 
 int base=10;
 
 FILE *readFilePtr; 
@@ -62,16 +62,12 @@ void convertToDecimalAndPrint(char* str , int size, int _base,char* str2){
 	
 }
 
-int main(int argc,char* argv[]){
+int main(){
 	
-	if(argc==1)
-		printf("Error Message!");
-	if(argc>=2){
-		readFilePtr = fopen(argv[1],"r");
-	}
-//	readFilePtr = fopen("150120074_p1_input.txt","r");
+	
+	readFilePtr = fopen("input.txt","r");
 
-	writeFilePtr = fopen("150120074_p1_output.txt","w");
+	writeFilePtr = fopen("output.txt","w");
 
 	digitListPtr number1Root=NULL;
 	
